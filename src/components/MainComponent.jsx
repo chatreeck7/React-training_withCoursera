@@ -3,7 +3,9 @@ import  Menu  from './MenuComponent'
 import DishDetail from './DishdetailComponent';
 import Header from './HeaderComponent';
 import Footer from './FooterComponent';
+import Home from './HomeComponent';
 import { DISHES } from '../shared/dishes'
+import { Switch, Redirect, Route } from 'react-router-dom';
 // Add a Container Component
 class Main extends Component {
 
@@ -20,14 +22,22 @@ class Main extends Component {
    };
 
   render(){
+    const HomePage = () => {
+        return (
+            <Home />
+        );
+    }
     return (
-      <div>
-        <Header />
-        {/* This is a example of how to lift-states-up among various component */}
-        <Menu dishes={this.state.dishes} onClick={(dishId) => this.onDishSelect(dishId)}/>
-        <DishDetail selectedDish={this.state.dishes.filter((dish) => dish.id === this.state.selectedDish)[0]}/>
-        <Footer />
-      </div>
+        //Configuring the Router
+        <div>
+            <Header />
+            <Switch>
+                <Route path="/home" component={HomePage}/>
+                <Route exact path="/menu" component={() => <Menu dishes={this.state.dishes} />} />
+                <Redirect to="/home" /> {/* Redirect to home if path is not in configuration router */}
+            </Switch>
+            <Footer />
+        </div>
     );
   }
 }
