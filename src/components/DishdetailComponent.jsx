@@ -1,5 +1,6 @@
 import React from "react";
-import { Card, CardTitle, CardText, CardBody, CardImg } from "reactstrap";
+import { Card, CardTitle, CardText, CardBody, CardImg, Breadcrumb, BreadcrumbItem } from "reactstrap";
+import { Link } from "react-router-dom"
 
     // Use less constructor warning
     function RenderComments({comments}) {
@@ -59,14 +60,28 @@ import { Card, CardTitle, CardText, CardBody, CardImg } from "reactstrap";
     }
 
     const DishDetail = (props) => {
-        const dish = props.selectedDish;
+        console.log(`Props : `,props);
+        const dish = props?.selectedDish;
+        const comments = props?.selectedComments;
+        console.log(`Dish : `,dish);
+        console.log(`Comments : `, comments);
         return (
             <div className="container">
+                <div className="row">
+                    <Breadcrumb>
+                        <BreadcrumbItem><Link to="/menu">Menu</Link></BreadcrumbItem>
+                        <BreadcrumbItem active>{dish.name}</BreadcrumbItem>
+                    </Breadcrumb>
+                    <div className="col-12">
+                        <h3>{dish.name}</h3>
+                        <hr />
+                    </div>                
+                </div>
                 <div className='row'>
                     <div className="col-12 col-md-5 m-1">
                         <RenderDish dish={dish}/>
                     </div>
-                    <RenderComments comments={dish?.comments}/>
+                    <RenderComments comments={comments}/>
                 </div>
             </div>
         );
