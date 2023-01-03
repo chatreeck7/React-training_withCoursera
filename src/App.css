@@ -31,3 +31,9 @@ address{
 .navbar-dark {
     background-color: #512DA8;
 }
+
+.modal-backdrop {  
+
+    opacity: 0.3 !important;
+
+}
