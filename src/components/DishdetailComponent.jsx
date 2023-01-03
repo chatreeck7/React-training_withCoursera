@@ -60,11 +60,11 @@ import { Link } from "react-router-dom"
     }
 
     const DishDetail = (props) => {
-        console.log(`Props : `,props);
+        // console.log(`Props : `,props);
         const dish = props?.selectedDish;
         const comments = props?.selectedComments;
-        console.log(`Dish : `,dish);
-        console.log(`Comments : `, comments);
+        // console.log(`Dish : `,dish);
+        // console.log(`Comments : `, comments);
         return (
             <div className="container">
                 <div className="row">
