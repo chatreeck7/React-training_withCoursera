@@ -28,8 +28,7 @@ class CommentForm extends Component {
 
     handleSubmit(values) {
         console.log('Current State is: ' + JSON.stringify(values));
-        alert('Current State is: ' + JSON.stringify(values));
-        // event.preventDefault();
+        this.props.addComment(this.props.dishId, values.rating, values.author, values.comment)
     }
 
     render() {
@@ -44,22 +43,22 @@ class CommentForm extends Component {
                                 <Label htmlFor="rating" md={2}>Rating</Label>
                                 <Col md={10}>
                                     <Control.select model=".rating" name="rating" className="form-control">
-                                        <option>1</option>
-                                        <option>2</option>
-                                        <option>3</option>
-                                        <option>4</option>
-                                        <option>5</option>
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                        <option value="4">4</option>
+                                        <option value="5">5</option>
                                     </Control.select>
                                 </Col>
                             </Row>
                             <Row className="form-group">
-                                <Label htmlFor="yourname" md={2}>Your Name</Label>
+                                <Label htmlFor="author" md={2}>Your Name</Label>
                                 <Col md={10}>
-                                    <Control.text model=".yourname" id="yourname" name="yourname"
+                                    <Control.text model=".author" id="author" name="author"
                                         placeholder="Your Name"
                                         className="form-control"
                                         validators={{required, minLength: minLength(3), maxLength: maxLength(15)}}/>
-                                        <Errors className="text-danger" model=".yourname" show="touched" messages={{
+                                        <Errors className="text-danger" model=".author" show="touched" messages={{
                                             required: 'Required ',
                                             minLength: 'Must be greater than 2 charracters ',
                                             maxLength: 'Must be 15 characters or less '
@@ -88,8 +87,8 @@ class CommentForm extends Component {
         );
     }       
 }
-// Use less constructor warning
-function RenderComments({comments}) {
+// initiate action upon the user submitting
+function RenderComments({comments, addComment, dishId}) {
     if(comments != null) {
         // console.log(dish.comments);
         const comment = comments.map(({author, comment, date, id, rating}) => {                    
@@ -111,11 +110,12 @@ function RenderComments({comments}) {
         });
 
         return (
-            <div>
+            <div className="col-12 col-md-5 m-1">
                 <h4>Comments</h4>
                 <ul className="list-unstyled">
                     { comment }
                 </ul>
+                <CommentForm dishId={dishId} addComment={addComment}/>
             </div>
         );    
     }
@@ -149,6 +149,7 @@ const DishDetail = (props) => {
     // console.log(`Props : `,props);
     const dish = props?.selectedDish;
     const comments = props?.selectedComments;
+    const addComment = props?.addComment;
     // console.log(`Dish : `,dish);
     // console.log(`Comments : `, comments);
     return (
@@ -167,10 +168,10 @@ const DishDetail = (props) => {
                 <div className="col-12 col-md-5 m-1">
                     <RenderDish dish={dish}/>
                 </div>
-                <div className="col-12 col-md-5 m-1">
-                    <RenderComments comments={comments}/>
-                    <CommentForm/>
-                </div>
+                <RenderComments comments={comments}
+                    addComment={addComment}
+                    dishId={dish.id}
+                />
             </div>
         </div>
     );
