@@ -8,7 +8,7 @@ import Contact from './ContactComponent';
 import About from './AboutComponent';
 import { Switch, Redirect, Route, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { postComment, fetchDishes, fetchComments, fetchPromos} from '../redux/ActionCreators';
+import { postFeedback ,postComment, fetchDishes, fetchComments, fetchPromos, fetchLeaders} from '../redux/ActionCreators';
 import { actions } from 'react-redux-form';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
 
@@ -25,18 +25,16 @@ const mapStateToProps = state => {
 // dispatch the action 
 const mapDispatchToProps = dispatch => ({
   postComment: (dishId, rating, author, comment) => dispatch(postComment(dishId, rating, author, comment)),
-  fetchDishes: () => {dispatch(fetchDishes())},
+  postFeedback: (feedback) => dispatch(postFeedback(feedback)) ,
   resetFeedbackForm: () => {dispatch(actions.reset('feedback'))},
-  fetchComments: () => dispatch(fetchComments()),
-  fetchPromos: () => dispatch(fetchPromos())
+  fetchDishes: () => {dispatch(fetchDishes())},
+  fetchComments: () => {dispatch(fetchComments())},
+  fetchPromos: () => {dispatch(fetchPromos())},
+  fetchLeaders: () => {dispatch(fetchLeaders())}
 });
 
 // Add a Container Component
 class Main extends Component {
-
-  constructor(props) {
-    super(props);
-  }
 
   //the lifecycle method component
   //executed after this component gets mounted
@@ -44,6 +42,7 @@ class Main extends Component {
     this.props.fetchDishes();
     this.props.fetchComments();
     this.props.fetchPromos();
+    this.props.fetchLeaders();
   }
 
   render(){
@@ -56,7 +55,9 @@ class Main extends Component {
               promotion={this.props.promotions.promotions.filter((promo) => promo.featured)[0]}
               promoLoading={this.props.promotions.isLoading}
               promoErrMess={this.props.promotions.errMess}
-              leader={this.props.leaders.filter((leader) => leader.featured)[0]}
+              leader={this.props.leaders.leaders.filter((leader) => leader.featured)[0]}
+              leaderLoading={this.props.leaders.isLoading}
+              leaderErrMess={this.props.leaders.errMess}
             />
         );
     }
@@ -73,6 +74,24 @@ class Main extends Component {
         );
     }
 
+    const AboutUsPage = () => {
+        return (
+          <About leaders={this.props.leaders.leaders}
+                leadersLoading={this.props.leaders.isLoading}
+                leadersErrMess={this.props.leaders.errMess} 
+          />
+        );
+    }
+
+    const ContactUsPage = () => {
+        return (
+          <Contact 
+                resetFeedbackForm={this.props.resetFeedbackForm}
+                postFeedback={this.props.postFeedback}
+          />
+      );
+    }
+
     return (
         //Configuring the Router
         <div>
@@ -83,8 +102,8 @@ class Main extends Component {
                     <Route path="/home" component={HomePage}/>
                     <Route exact path="/menu" component={() => <Menu dishes={this.props.dishes} />} />
                     <Route path="/menu/:dishId" component={DishWithId}/>
-                    <Route exact path="/contactus" component={() => <Contact resetFeedbackForm={this.props.resetFeedbackForm}/>}/>
-                    <Route exact path="/aboutus" component={() => <About leaders={this.props.leaders} />}/>
+                    <Route exact path="/contactus" component={ContactUsPage}/>
+                    <Route exact path="/aboutus" component={AboutUsPage}/>
                     <Redirect to="/home" /> {/* Redirect to home if path is not in configuration router */}
                 </Switch>
               </CSSTransition>

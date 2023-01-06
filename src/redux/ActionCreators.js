@@ -1,5 +1,4 @@
 import * as ActionTypes from './ActionTypes';
-import { DISHES } from '../shared/dishes';
 import { baseUrl } from '../shared/baseUrl'; //to communicate with server
 
 
@@ -116,7 +115,7 @@ export const postComment = (dishId, rating, author, comment) => (dispatch) => {
         throw errmess;
     })
     .then(response => response.json())
-    .then(response => dispatch(addComment(response)))
+    .then(comment => dispatch(addComment(comment)))
     .catch(error => { console.log('post comments', error.message); 
             alert(`Your comment could not be posted\nError: ${error.message}`);
     });
@@ -163,3 +162,89 @@ export const addPromos = (promos) => ({
     payload: promos
 });
 // ---- Promos action creator END ----
+
+// ---- Leaders action creatorr BEGIN ----
+export const fetchLeaders = () => (dispatch) => {
+    
+    dispatch(leadersLoading());
+
+    return fetch(baseUrl + 'leaders')
+    // handling the error when response isn't ok
+    .then(response => {
+        if (response.ok){
+            return response;
+        }
+        else {
+            var error = new Error(`Error ${response.status} : ${response.statusText}`);
+            error.response = response;
+            throw error;
+        }
+    },
+    error => {
+        var errmess = new Error(error.message);
+        throw errmess;
+    })
+    .then(response => response.json())
+    .then(leaders => dispatch(addLeaders(leaders)))
+    .catch(error => dispatch(leadersFailed(error.message)));
+}
+
+export const leadersLoading = () => ({
+    type: ActionTypes.LEADERS_LOADING
+});
+
+export const leadersFailed = (errmess) => ({
+    type: ActionTypes.LEADERS_FAILED,
+    payload: errmess
+});
+
+export const addLeaders = (leaders) => ({
+    type: ActionTypes.ADD_LEADERS,
+    payload: leaders
+});
+// ---- Leaders action creatorr BEGIN ----
+
+//this is a example of redux thunk
+export const postFeedback = (feedback) => (dispatch) => {
+    
+    const newFeedback = {
+        firstname: feedback.firstname,
+        lastname: feedback.lastname,
+        telnum: feedback.telnum,
+        email: feedback.email,
+        agree: feedback.agree,
+        contactType: feedback.contactType,
+        message: feedback.message
+    };
+
+    newFeedback.date = new Date().toISOString();
+
+    return fetch(baseUrl + 'feedback', {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(newFeedback),
+        credentials: "same-origin"
+    })
+    // handling the error when response isn't ok
+    .then(response => {
+        if (response.ok){
+            return response;
+        }
+        else {
+            var error = new Error(`Error ${response.status} : ${response.statusText}`);
+            error.response = response;
+            throw error;
+        }
+    },
+    error => {
+        var errmess = new Error(error.message);
+        throw errmess;
+    })
+    .then(response => response.json())
+    .then(feedback => alert('Current State is: ' + JSON.stringify(feedback)))
+    .catch(error => { console.log('post feedback', error.message); 
+            alert(`Your feedback could not be posted\nError: ${error.message}`);
+    });
+} 
